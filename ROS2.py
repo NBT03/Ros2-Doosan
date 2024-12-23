@@ -18,7 +18,7 @@ class RobotTrajectoryController(Node):
         for joint_angles in trajectory:
             self.req.pos = joint_angles
             self.req.vel = 100.0  # Tốc độ di chuyển
-            self.req.acc = 30.0  # Gia tốc
+            self.req.acc = 50.0  # Gia tốc
             self.req.time = 0.0  # Thời gian thực hiện lệnh
             self.req.radius = 0.0  # Bán kính chuyển động tròn nếu cần
             self.req.mode = 0  # Chế độ điều khiển
