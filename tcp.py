@@ -21,7 +21,10 @@ class CreateTcpClient(Node):
         self.future = self.client.call_async(request)
         rclpy.spin_until_future_complete(self, self.future)
         if self.future.result() is not None:
-            self.get_logger().info(f'Response: {self.future.result()}')
+            if self.future.result().success:
+                self.get_logger().info(f"TCP '{name}' created successfully!")
+            else:
+                self.get_logger().error(f"Failed to create TCP '{name}'. Check robot logs for details.")
         else:
             self.get_logger().error('Service call failed')
 
@@ -32,8 +35,8 @@ def main(args=None):
     client = CreateTcpClient()
 
     # Example data for the service
-    name = 'tcp'  # Provide the TCP name here
-    positions = [100.0, 200.0, 300.0, 0.0, 0.0, 0.0]  # Replace with the desired positions
+    name = 'Tool'  # Provide the TCP name here
+    positions = [0.444, -1.000, 225.935, 0.0, 0.0, 0.0]  # Replace with the desired positions
 
     client.send_request(name, positions)
 
