@@ -17,9 +17,7 @@ class GetCurrentPoseClient(Node):
         if future.result() is not None:
             if future.result().success:
                 pos = future.result().pos
-                print("Joint Angles:")
-                print(f"Joint 1: {pos[0]:.2f}, Joint 2: {pos[1]:.2f}, Joint 3: {pos[2]:.2f}")
-                print(f"Joint 4: {pos[3]:.2f}, Joint 5: {pos[4]:.2f}, Joint 6: {pos[5]:.2f}")
+                print(pos)
             else:
                 print("Failed to retrieve pose.")
         else:

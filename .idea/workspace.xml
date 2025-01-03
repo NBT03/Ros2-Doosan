@@ -5,17 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ab78de7f-a02f-4e8c-a328-78993716fe5c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/Ros2-Doosan.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/get_current_pose.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/get_current_tcp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/robot_mode.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ros2.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/set_current_tcp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tcp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ROS2.py" beforeDir="false" afterPath="$PROJECT_DIR$/ROS2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/get_current_pose.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_current_pose.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/robot_mode.py" beforeDir="false" afterPath="$PROJECT_DIR$/robot_mode.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/set_output_modbus.py" beforeDir="false" afterPath="$PROJECT_DIR$/set_output_modbus.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +39,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging dev",
+    "git-widget-placeholder": "dev",
     "last_opened_file_path": "/home/batien/Desktop/Simulation-Doosan"
   }
 }]]></component>
