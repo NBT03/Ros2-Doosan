@@ -35,7 +35,7 @@ def main(args=None):
     digital_output_client = SetDigitalOutputClient()
 
     # Set the desired index and value
-    index = 7  # You can change this value
+    index = 6  # You can change this value
     value = 0
     # You can change this value
 

@@ -3,10 +3,20 @@ from rclpy.node import Node
 from dsr_msgs2.srv import MoveJoint
 from config_create_modbusTCP import main as cfg_modbus
 from dsr_msgs2.srv import SetModbusOutput
+from dsr_msgs2.srv import MoveLine
+from dsr_msgs2.srv import SetCtrlBoxDigitalOutput
 import time
+import socket
+ReadyToPick_Suction = [82.43, -528.97, 256.45, 42.68, -176.82, 134.2],
+OutBin_Suction = [171.4, -552.81, 240.54, 42.95, -176.81, 134.47 ],
+PreDrop_Suction = [260.68, -553.24, 240.88, 43.21, -176.81, 134.73],
+Drop_Suction = [305.37, -589.84, 116.24, 41.61, -176.83, 133.13],
 
+home = [-5.82,-285.69,199.75,117.32,-177.08,-144.85],
+ReadyToPick = [-5.82,-285.69,199.75,117.32,-177.08,-144.85],
+PreDrop = [340.41, -564.51, 201.33, 42.44, -176.82, 133.96],
+Drop = [383.52, -598.66, 74.83, 41.93, -176.83, 133.45],
 class ModbusOutputSetter(Node):
-
     def __init__(self):
         super().__init__('modbus_output_setter')
         # Sửa lại tên dịch vụ, loại bỏ khoảng trắng thừa
@@ -60,46 +70,138 @@ class RobotTrajectoryController(Node):
 
             # Chờ giữa các lần di chuyển nếu cần
             time.sleep(1.0)
+class MoveLineController(Node):
+    def __init__(self):
+        super().__init__('move_line_controller')
+        self.client = self.create_client(MoveLine, '/dsr01/motion/move_line')
 
+        while not self.client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Service not available, waiting again...')
+
+        self.req = MoveLine.Request()
+
+    def send_trajectory(self, trajectory):
+        for position in trajectory:
+            self.req.pos = position
+            self.req.vel = [100.0, 50.0]  # Tốc độ di chuyển (tuyến tính, góc)
+            self.req.acc = [100.0, 50.0]  # Gia tốc (tuyến tính, góc)
+            self.req.time = 0.0
+            self.req.radius = 0.0
+            self.req.ref = 0
+            self.req.mode = 0
+            self.req.blend_type = 1
+            self.req.sync_type = 0
+
+            future = self.client.call_async(self.req)
+            rclpy.spin_until_future_complete(self, future)
+
+            if future.result().success:
+                self.get_logger().info('✅ Moved to: %s' % position)
+            else:
+                self.get_logger().error('❌ Failed to move to: %s' % position)
+
+            time.sleep(1.0)
+class SetDigitalOutputClient(Node):
+
+    def __init__(self):
+        super().__init__('set_digital_output_client')
+        self.client = self.create_client(SetCtrlBoxDigitalOutput, '/dsr01/io/set_ctrl_box_digital_output')
+
+        # Wait for the service to be available
+        while not self.client.wait_for_service(timeout_sec=5.0):
+            self.get_logger().info('Waiting for service /dsr01/io/set_ctrl_box_digital_output...')
+
+    def send_request(self, index, value):
+        request = SetCtrlBoxDigitalOutput.Request()
+        request.index = index
+        request.value = value
+
+        # Send the request and wait for the response
+        future = self.client.call_async(request)
+        rclpy.spin_until_future_complete(self, future)
+
+        if future.result() is not None:
+            self.get_logger().info(f"Set output index {index} to value {value} successfully.")
+        else:
+            self.get_logger().error(f"Failed to set output index {index} to value {value}.")
 
 def main(args=None):
+    HOST = '0.0.0.0'  # Lắng nghe trên tất cả các IP của máy
+    PORT = 12345  # Cổng kết nối
+
+    # Tạo socket TCP
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))  # Gắn kết socket với địa chỉ và cổng
+    server_socket.listen(10)
+    print(f"🔵 Server đang chạy trên {HOST}:{PORT}...")
     cfg_modbus()
     rclpy.init(args=args)
-    robot_controller = RobotTrajectoryController()
+    movej = RobotTrajectoryController()
     modbus_output_setter = ModbusOutputSetter()
-    modbus_output_setter.set_modbus_output('gripper_signal_1', 2304)  # Ví dụ: output_1 = 1
-    time.sleep(1)
-    home_pose = [
-        [-94.06, -13.65, 101.87, 1.48, 89.39, 3.73],
-    ]
-    bf_grasp = [
-        [-93.25875092, 31.32101822, 56.63997269, -4.13985443, 89.58004761 ,3.72981906],
-    ]
-    grasp = [
-        [-96.45167542, 38.41414642, 70.43661499, -2.21640038, 68.62203979, 3.73855257],
-    ]
-    out = [
-        [-59.81486893 , 45.58809662 , 45.90498734 ,- 2.63783145 , 87.94761658, 3.73825669],
-    ]
-    robot_controller.send_trajectory(home_pose)
-    modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
-    modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
-    robot_controller.send_trajectory(bf_grasp)
-    time.sleep(1)
-    robot_controller.send_trajectory(grasp)
-    time.sleep(1)
-    modbus_output_setter.set_modbus_output('gripper_signal_3', 100)  # Ví dụ: output_3 = 1
-    modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
-    time.sleep(1)
-    robot_controller.send_trajectory(bf_grasp)
-    time.sleep(1)
-    robot_controller.send_trajectory(out)
-    time.sleep(1)
-    modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
-    modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
-    robot_controller.send_trajectory(home_pose)
-    # Danh sách các tập hợp góc khớp cần di chuyển
-    rclpy.shutdown()
+    digital_output_client = SetDigitalOutputClient()
+    movel = MoveLineController()
+    # movel.send_trajectory()
+    # modbus_output_setter.set_modbus_output('gripper_signal_1', 2304)
+    port = 12345
+    digital_output_client.send_request(6, 0)
+    digital_output_client.send_request(7, 0)
+    digital_output_client.destroy_node()
+    conn, addr = server_socket.accept()  # Chấp nhận kết nối
+    print(f"🟢 Nhận kết nối từ {addr}")
+    while True:
+        print("1")
+        data = conn.recv(1024).decode()  # Nhận dữ liệu từ client
+        Pick = data.split(",")
+        pickType = str(Pick[0])
+        if not data:
+            break
+        print(f"📩 Dữ liệu nhận được: {data}")
+        print(Pick)
+        print(pickType)
+        if pickType == "s":
+            PrePick = [float(num) for num in Pick[1:7]],
+            TarPick = [float(num) for num in Pick[7:]],
+            print("PrePick", PrePick)
+            print("TarPick", TarPick)
+            movel.send_trajectory(ReadyToPick_Suction)
+            movel.send_trajectory(PrePick)
+            digital_output_client.send_request(6, 1)
+            digital_output_client.send_request(7, 1)
+
+            movel.send_trajectory(TarPick)
+            wait(0.3)
+
+            # begin_blend(radius = 120)
+            movel.send_trajectory(PrePick)
+            movel.send_trajectory(ReadyToPick_Suction)
+            movel.send_trajectory(OutBin_Suction)
+            conn.send("finish".encode())
+            movel.send_trajectory(PreDrop_Suction)
+            movel.send_trajectory(Drop_Suction)
+            set_digital_output(7, 0)
+            set_digital_output(6, 0)
+        # home_pose = [
+    #     [-94.06, -13.65, 101.87, 1.48, 89.39, 3.73],
+    # ]
+    # movej.send_trajectory(home_pose)
+    # modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
+    # modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
+    # movej.send_trajectory(bf_grasp)
+    # time.sleep(1)
+    # movej.send_trajectory(grasp)
+    # time.sleep(1)
+    # modbus_output_setter.set_modbus_output('gripper_signal_3', 100)  # Ví dụ: output_3 = 1
+    # modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
+    # time.sleep(1)
+    # movej.send_trajectory(bf_grasp)
+    # time.sleep(1)
+    # movej.send_trajectory(out)
+    # time.sleep(1)
+    # modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
+    # modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
+    # movej.send_trajectory(home_pose)
+    # # Danh sách các tập hợp góc khớp cần di chuyển
+    # rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
