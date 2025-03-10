@@ -16,7 +16,7 @@ class MoveLineController(Node):
     def send_trajectory(self, trajectory):
         for position in trajectory:
             self.req.pos = position
-            self.req.vel = [10.0, 10.0]  # Tốc độ di chuyển (tuyến tính, góc)
+            self.req.vel = [100.0, 10.0]  # Tốc độ di chuyển (tuyến tính, góc)
             self.req.acc = [10.0, 10.0]  # Gia tốc (tuyến tính, góc)
             self.req.time = 0.0
             self.req.radius = 0.0

@@ -36,7 +36,7 @@ def main(args=None):
 
     # Example data for the service
     name = 'Tool'  # Provide the TCP name here
-    positions = [0.444, -1.000, 225.935, 0.0, 0.0, 0.0]  # Replace with the desired positions
+    positions = [5.670, -80.975, 187.318, 0.0, 0.0, 0.0]  # Replace with the desired positions
 
     client.send_request(name, positions)
 
