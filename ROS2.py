@@ -8,18 +8,19 @@ from dsr_msgs2.srv import SetCtrlBoxDigitalOutput
 from dsr_msgs2.srv import ConfigCreateTcp
 from dsr_msgs2.srv import SetRobotMode
 from dsr_msgs2.srv import SetCurrentTcp
-
 import time
 import socket
+
+#define pose
 ReadyToPick_Suction = [82.43, -528.97, 256.45, 42.68, -176.82, 134.2],
 OutBin_Suction = [171.4, -552.81, 240.54, 42.95, -176.81, 134.47 ],
 PreDrop_Suction = [260.68, -553.24, 240.88, 43.21, -176.81, 134.73],
 Drop_Suction = [305.37, -589.84, 116.24, 41.61, -176.83, 133.13],
-
 home = [-5.82,-285.69,199.75,117.32,-177.08,-144.85],
 ReadyToPick = [-5.82,-285.69,199.75,117.32,-177.08,-144.85],
 PreDrop = [340.41, -564.51, 201.33, 42.44, -176.82, 133.96],
 Drop = [383.52, -598.66, 74.83, 41.93, -176.83, 133.45],
+
 class SetCurrentTcpClient(Node):
     def __init__(self):
         super().__init__('set_current_tcp_client')
@@ -44,6 +45,7 @@ class SetCurrentTcpClient(Node):
                 self.get_logger().error(f"Failed to set current TCP to '{tcp_name}'")
         else:
             self.get_logger().error('Service call failed')
+
 class SetRobotModeClient(Node):
     def __init__(self):
         super().__init__('set_robot_mode_client')
@@ -63,6 +65,7 @@ class SetRobotModeClient(Node):
                 self.get_logger().error(f'Failed to set robot mode to {robot_mode}')
         else:
             self.get_logger().error('Service call failed!')
+
 class CreateTcpClient(Node):
     def __init__(self):
         super().__init__('create_tcp_client')
@@ -163,13 +166,11 @@ class MoveLineController(Node):
 
             future = self.client.call_async(self.req)
             rclpy.spin_until_future_complete(self, future)
-
             if future.result().success:
                 self.get_logger().info('✅ Moved to: %s' % position)
             else:
                 self.get_logger().error('❌ Failed to move to: %s' % position)
 
-            time.sleep(1.0)
 class SetDigitalOutputClient(Node):
 
     def __init__(self):
@@ -244,8 +245,8 @@ def main(args=None):
             print("TarPick", TarPick)
             movel.send_trajectory(ReadyToPick_Suction)
             movel.send_trajectory(PrePick)
-            # digital_output_client.send_request(6, 1)
-            # digital_output_client.send_request(7, 1)
+            digital_output_client.send_request(6, 1)
+            digital_output_client.send_request(7, 1)
 
             movel.send_trajectory(TarPick)
             # begin_blend(radius = 120)
@@ -255,6 +256,8 @@ def main(args=None):
             conn.send("finish".encode())
             movel.send_trajectory(PreDrop_Suction)
             movel.send_trajectory(Drop_Suction)
+            digital_output_client.send_request(6, 0)
+            digital_output_client.send_request(7, 0)
         # home_pose = [
     #     [-94.06, -13.65, 101.87, 1.48, 89.39, 3.73],
     # ]
