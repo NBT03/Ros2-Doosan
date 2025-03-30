@@ -17,7 +17,7 @@ class GetCurrentPoseClient(Node):
         if future.result() is not None:
             if future.result().success:
                 pos = future.result().pos
-                print(pos)
+                print(f"[{', '.join(map(str, pos))}]")
             else:
                 print("Failed to retrieve pose.")
         else:

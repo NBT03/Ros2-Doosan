@@ -25,7 +25,7 @@ class SetRobotModeClient(Node):
 def main():
     rclpy.init()
     client = SetRobotModeClient()
-    client.send_request(1)  # Thay đổi mode thành AUTONOMOUS (1)
+    client.send_request(0)  # Thay đổi mode thành AUTONOMOUS (1)
     rclpy.shutdown()
 # ros2 service call /dsr01/system/get_robot_mode dsr_msgs2/srv/GetRobotMode {}\
 # ros2 service call /dsr01/system/set_robot_mode dsr_msgs2/srv/SetRobotMode {}\
