@@ -36,8 +36,8 @@ def main(args=None):
 
     # Example data for the service
     name = 'Tool'  # Provide the TCP name here
-    positions = [5.670, -80.975, 187.318, 0.0, 0.0, 0.0]  # Replace with the desired positions
-
+    positions = [-7.448, -92.785, 183.447, 0.0, 0.0, 0.0]  # Suction
+    # positions = [0.0, 0.0, 180.0, 0.0, 0.0, 0.0] # Gripper
     client.send_request(name, positions)
 
     client.destroy_node()

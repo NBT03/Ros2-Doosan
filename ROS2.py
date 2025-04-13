@@ -12,14 +12,11 @@ import time
 import socket
 
 #define pose
-ReadyToPick_Suction = [82.43, -528.97, 256.45, 42.68, -176.82, 134.2],
-OutBin_Suction = [171.4, -552.81, 240.54, 42.95, -176.81, 134.47 ],
-PreDrop_Suction = [260.68, -553.24, 240.88, 43.21, -176.81, 134.73],
-Drop_Suction = [305.37, -589.84, 116.24, 41.61, -176.83, 133.13],
-home = [-5.82,-285.69,199.75,117.32,-177.08,-144.85],
-ReadyToPick = [-5.82,-285.69,199.75,117.32,-177.08,-144.85],
-PreDrop = [340.41, -564.51, 201.33, 42.44, -176.82, 133.96],
-Drop = [383.52, -598.66, 74.83, 41.93, -176.83, 133.45],
+home = [-136.8, 4.97, 196.52, 125.66, 176.35, 122.51],
+ReadyToPick_Suction = [-451.75, -191.56, 286.9, 12.97, -176.25, 12.83],   
+OutBin_Suction = [-451.12, -314.32, 288.31, 12.89, -176.28, 12.75],
+PreDrop_Suction = [-453.41, -419.75, 239.07, 13.01, -176.27, 12.86],
+Drop_Suction = [-459.15, -421.0, 146.0, 13.02, -176.27, 12.88],
 
 class SetCurrentTcpClient(Node):
     def __init__(self):
@@ -155,8 +152,8 @@ class MoveLineController(Node):
     def send_trajectory(self, trajectory):
         for position in trajectory:
             self.req.pos = position
-            self.req.vel = [2200.0, 2200.0]
-            self.req.acc = [1200.0, 1200.0]
+            self.req.vel = [2000.0, 2000.0]
+            self.req.acc = [1000.0, 1000.0]
             self.req.time = 0.0
             self.req.radius = 120.0
             self.req.ref = 0
@@ -211,7 +208,7 @@ def main(args=None):
     time.sleep(1)
     tcp_name = 'Suction'
     creat_tcp = CreateTcpClient()
-    TCP = [5.670, -80.975, 187.318, 0.0, 0.0, 0.0]  # Replace with the desired positions
+    TCP = [-7.448, -92.785, 183.447, 0.0, 0.0, 0.0]  # Replace with the desired positions
     creat_tcp.send_request(tcp_name, TCP)
     set_current_tcp = SetCurrentTcpClient()
     set_current_tcp.send_request(tcp_name)
