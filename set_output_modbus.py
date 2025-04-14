@@ -1,5 +1,4 @@
 import time
-
 import rclpy
 from rclpy.node import Node
 from dsr_msgs2.srv import SetModbusOutput
@@ -35,11 +34,13 @@ def main(args=None):
     modbus_output_setter = ModbusOutputSetter()
 
     # Set giá trị output cho 3 chân Modbus
-    # modbus_output_setter.set_modbus_output('gripper_signal_1', 2304)  # Ví dụ: output_1 = 1
+    modbus_output_setter.set_modbus_output('gripper_signal_1', 2304)  # Ví dụ: output_1 = 1
     modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
     modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
     time.sleep(2)
     modbus_output_setter.set_modbus_output('gripper_signal_3', 150)  # Ví dụ: output_3 = 1
+    time.sleep(5)
+    modbus_output_setter.set_modbus_output('gripper_signal_3', 50)  # Ví dụ: output_3 = 1
     modbus_output_setter.set_modbus_output('gripper_signal_5', 25000)  # Ví dụ: output_2 = 0
     rclpy.shutdown()
 
