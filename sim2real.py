@@ -47,8 +47,8 @@ class RobotTrajectoryController(Node):
     def send_trajectory(self, trajectory):
         for joint_angles in trajectory:
             self.req.pos = joint_angles
-            self.req.vel = 50.0  # Tốc độ di chuyển
-            self.req.acc = 50.0  # Gia tốc
+            self.req.vel =100.0  # Tốc độ di chuyển
+            self.req.acc = 100.0  # Gia tốc
             self.req.time = 0.0  # Thời gian thực hiện lệnh
             self.req.radius = 0.0  # Bán kính chuyển động tròn nếu cần
             self.req.mode = 0  # Chế độ điều khiển
@@ -62,39 +62,24 @@ class RobotTrajectoryController(Node):
                 self.get_logger().info('Successfully moved to: %s' % joint_angles)
             else:
                 self.get_logger().error('Failed to move to: %s' % joint_angles)
-
-            time.sleep(1.0)
 def main(args=None):
     rclpy.init(args=args)
     modbus_output_setter = ModbusOutputSetter()
-    home_pose = [[-180.25440979003906, -34.360267639160156, 120.13651275634766, -2.418900489807129, 91.78060913085938, 4.818256378173828],]
     modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
-    pre_pick = [[-188.56085205078125, 3.511002540588379, 94.67302703857422, 0.09725085645914078, 79.82866668701172, -11.41978645324707],]
-    pick = [[-189.0299072265625, 20.919200897216797, 103.45702362060547, -0.8632915019989014, 60.25026321411133, -82.31758117675781],]
-    pos1 = [[-177.91026306152344, -0.15344049036502838, 98.72183990478516, 4.12815523147583, 64.86690521240234, -82.3172836303711],]
-    pos2 = [[-165.89002990722656, -2.869428873062134, 95.90898895263672, 9.484339714050293, 66.0444564819336, -82.3172836303711],]
-    pos3 = [[-157.7408905029297, -3.578080654144287, 88.03659057617188, 9.621560096740723, 70.218505859375, -82.3172836303711],]
-    pos4 = [[-149.8199005126953, -3.517390251159668, 79.58381652832031, 9.732283592224121, 73.36569213867188, -82.3172836303711],]
-    pos5 = [[-139.44691467285156, 8.324919700622559, 62.2560920715332, 9.714668273925781, 73.3966293334961, -82.3172836303711],]
-    pos6 = [[-124.77759552001953, 12.20557975769043, 58.359092712402344, 10.023303985595703, 74.20899963378906, -82.3172836303711],]
-    pos7 = [[-92.920166015625, 13.321698188781738, 55.4545783996582, 9.604241371154785, 79.06218719482422, -82.3172836303711],]
-    pos8 = [[-77.76512908935547, 19.563478469848633, 73.0858154296875, -0.024130742996931076, 82.45494842529297, -82.317138671875],]
+    home = [[-184.06, -25.00, 115.00, 1.48, 89.39, 3.73],]
+    target = [[-84.06, 30.00, 60.84, 1.48, 89.39, 3.73],]
+    pose = [[-184.06000000000003, -13.65, 101.86999999999999, 1.4800000000000002, 89.39, 3.7300000000000004], [-165.2664052902455, -27.21972201980697, 98.8729718714132, 13.575196232640698, 85.29103291964726, -6.819291400759887], [-147.25551449566, -23.590523462734208, 80.54016079575445, 2.5398979758249984, 80.62098084407161, -8.679173703629518], [-122.46880124523675, -21.92307396748091, 81.80955241874327, 9.452384658148935, 82.15729111477866, 3.6409711596141046], [-107.2176100965166, -2.535160307288452, 73.32951800551001, 14.704920966508686, 75.28309885340522, 11.731516220762597], [-87.59229133582375, 5.1876157439113735, 59.373940254882555, 6.59800568270297, 78.47730591487857, 1.4736413637090822], [-75.7740929322138, 28.548902712145956, 60.782506262348626, 1.7793152164959494, 88.75179527825041, 3.5980418671678294], [-75.04, 29.999999999999996, 60.870000000000005, 1.4800000000000002, 89.39, 3.7300000000000004]]
+    ready_grip = [[-189.8553009033203, 7.76143217086792, 97.4365005493164, -4.070281982421875, 70.46244812011719, -85.6170883178711],]
+    grip = [[-190.90371704101562, 23.409793853759766, 104.26335144042969, -0.13722233474254608, 55.18095397949219, -85.61634826660156],]
     movej = RobotTrajectoryController()
-    movej.send_trajectory(home_pose)
-    movej.send_trajectory(pre_pick)
-    movej.send_trajectory(pick)
-    modbus_output_setter.set_modbus_output('gripper_signal_3', 150)
-    time.sleep(1)  # Ví dụ: output_3 = 1
-    movej.send_trajectory(pre_pick)
-    movej.send_trajectory(pos1)
-    movej.send_trajectory(pos2)
-    movej.send_trajectory(pos3)
-    movej.send_trajectory(pos4)
-    movej.send_trajectory(pos5)
-    movej.send_trajectory(pos6)
-    movej.send_trajectory(pos7)
-    movej.send_trajectory(pos8)
-    modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
+    movej.send_trajectory(home)
+    # movej.send_trajectory(ready_grip)
+    # movej.send_trajectory(grip)
+    # modbus_output_setter.set_modbus_output('gripper_signal_3', 150)
+    # time.sleep(1)
+    # movej.send_trajectory(ready_grip)
+    # movej.send_trajectory(pose)
+    # modbus_output_setter.set_modbus_output('gripper_signal_3', 0)  # Ví dụ: output_3 = 1
 
     # time.sleep(2)
     # movej.send_trajectory(test_pose)

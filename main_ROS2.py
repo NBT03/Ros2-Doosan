@@ -31,8 +31,8 @@ class NodeROS(Node):
         for joint_angles in trajectory:
             joint_angles_in_degrees = [math.degrees(angle) for angle in joint_angles]  # Chuyển đổi radian sang độ
             self.req.pos = joint_angles_in_degrees
-            self.req.vel = 1000.0  # Tốc độ di chuyển
-            self.req.acc = 1000.0  # Gia tốc
+            self.req.vel = 100.0  # Tốc độ di chuyển
+            self.req.acc = 100.0  # Gia tốc
             self.req.time = 0.0  # Thời gian thực hiện lệnh
             self.req.radius = 0.0  # Bán kính chuyển động tròn nếu cần
             self.req.mode = 0  # Chế độ điều khiển

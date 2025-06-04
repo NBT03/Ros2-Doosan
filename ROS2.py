@@ -12,11 +12,17 @@ import time
 import socket
 
 #define pose
-home = [-136.8, 4.97, 196.52, 125.66, 176.35, 122.51],
-ReadyToPick_Suction = [-451.75, -191.56, 286.9, 12.97, -176.25, 12.83],   
-OutBin_Suction = [-451.12, -314.32, 288.31, 12.89, -176.28, 12.75],
-PreDrop_Suction = [-453.41, -419.75, 239.07, 13.01, -176.27, 12.86],
-Drop_Suction = [-459.15, -421.0, 146.0, 13.02, -176.27, 12.88],
+# home = [-136.8, 4.97, 196.52, 125.66, 176.35, 122.51],
+# ReadyToPick_Suction = [-451.75, -191.56, 286.9, 12.97, -176.25, 12.83],   
+# OutBin_Suction = [-451.12, -314.32, 288.31, 12.89, -176.28, 12.75],
+# PreDrop_Suction = [-453.41, -419.75, 239.07, 13.01, -176.27, 12.86],
+# Drop_Suction = [-459.15, -421.0, 146.0, 13.02, -176.27, 12.88],
+# home = [-22.87, -164.01, 193.95, 47.18, 178.4, -128.69], 
+home = [[-184.06, -25.00, 115.00, 1.48, 89.39, 3.73],]
+ReadyToPick_Suction = [-425.65, -244.13, 286.81, 19.78, -176.26, -164.3], 
+OutBin_Suction = [-468.06, -206.81, 294.7, 175.32, 177.32, -8.17],
+PreDrop_Suction = [-452.87, -275.41, 267.31, 118.0, -178.95, -71.72],
+Drop_Suction = [-475.62, -289.35, 157.48, 14.19, 178.31, -175.07], 
 
 class SetCurrentTcpClient(Node):
     def __init__(self):
@@ -122,8 +128,8 @@ class RobotTrajectoryController(Node):
     def send_trajectory(self, trajectory):
         for joint_angles in trajectory:
             self.req.pos = joint_angles
-            self.req.vel = 30.0  # Tốc độ di chuyển
-            self.req.acc = 20.0  # Gia tốc
+            self.req.vel = 100.0  # Tốc độ di chuyển
+            self.req.acc = 100.0  # Gia tốc
             self.req.time = 0.0  # Thời gian thực hiện lệnh
             self.req.radius = 0.0  # Bán kính chuyển động tròn nếu cần
             self.req.mode = 0  # Chế độ điều khiển
@@ -152,7 +158,7 @@ class MoveLineController(Node):
     def send_trajectory(self, trajectory):
         for position in trajectory:
             self.req.pos = position
-            self.req.vel = [2000.0, 2000.0]
+            self.req.vel = [1000.0, 1000.0]
             self.req.acc = [1000.0, 1000.0]
             self.req.time = 0.0
             self.req.radius = 120.0
@@ -220,7 +226,8 @@ def main(args=None):
     # modbus_output_setter.set_modbus_output('gripper_signal_1', 2304)
     digital_output_client.send_request(6, 0)
     digital_output_client.send_request(7, 0)
-    movel.send_trajectory(home)
+    # movel.send_trajectory(home)
+    movej.send_trajectory(home)
     digital_output_client.destroy_node()
     conn, addr = server_socket.accept()  # Chấp nhận kết nối
     print(f"🟢 Nhận kết nối từ {addr}")
@@ -255,7 +262,7 @@ def main(args=None):
             movel.send_trajectory(Drop_Suction)
             digital_output_client.send_request(6, 0)
             digital_output_client.send_request(7, 0)
-        # home_pose = [
+    # home_pose = [
     #     [-94.06, -13.65, 101.87, 1.48, 89.39, 3.73],
     # ]
     # movej.send_trajectory(home_pose)

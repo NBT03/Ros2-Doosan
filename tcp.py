@@ -35,7 +35,7 @@ def main(args=None):
     client = CreateTcpClient()
 
     # Example data for the service
-    name = 'Tool'  # Provide the TCP name here
+    name = 'Suction'  # Provide the TCP name here
     positions = [-7.448, -92.785, 183.447, 0.0, 0.0, 0.0]  # Suction
     # positions = [0.0, 0.0, 180.0, 0.0, 0.0, 0.0] # Gripper
     client.send_request(name, positions)
